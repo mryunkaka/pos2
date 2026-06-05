@@ -8,6 +8,8 @@ return [
 
     'dark_mode' => env('DARK_MODE', false),
 
+    'offline' => env('APP_OFFLINE', false),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name

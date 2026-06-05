@@ -99,10 +99,12 @@ class TenantPanelProvider extends PanelProvider
             fn () => view('meta')
         );
 
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::GLOBAL_SEARCH_AFTER,
-            fn () => view('version-indicator')
-        );
+        if (! config('app.offline')) {
+            FilamentView::registerRenderHook(
+                PanelsRenderHook::GLOBAL_SEARCH_AFTER,
+                fn () => view('version-indicator')
+            );
+        }
 
         if (app()->environment('demo')) {
             FilamentView::registerRenderHook(
@@ -130,7 +132,7 @@ class TenantPanelProvider extends PanelProvider
                 Js::make('custom-javascript', resource_path('js/app.js')),
                 Js::make('printer', resource_path('js/printer.js')),
                 Js::make('indexeddb', resource_path('js/indexeddb.js')),
-                Js::make('html5-qrcode', 'https://unpkg.com/html5-qrcode')
+                Js::make('html5-qrcode', asset('vendor/html5-qrcode/html5-qrcode.min.js'))
             ])
             ->favicon(url('favicon.ico'))
             ->spa(config('app.spa_mode'))
@@ -175,10 +177,10 @@ class TenantPanelProvider extends PanelProvider
     {
         return [
             NavigationGroup::make(__('Inventory'))->items([
+                $this->generateNavigationItem(CategoryResource::class),
+                $this->generateNavigationItem(ProductResource::class),
                 $this->generateNavigationItem(PurchasingResource::class, Purchasing::class),
                 $this->generateNavigationItem(StockOpnameResource::class, StockOpname::class),
-                $this->generateNavigationItem(ProductResource::class),
-                $this->generateNavigationItem(CategoryResource::class),
                 $this->generateNavigationItem(TableResource::class)->hidden($this->isNonFnbBusiness()),
             ]),
             NavigationGroup::make(__('User'))->items([

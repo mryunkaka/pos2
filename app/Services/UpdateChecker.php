@@ -29,8 +29,18 @@ class UpdateChecker
 
     private function fetchAndCacheApiResponse(): ?array
     {
+        if (! config('updater.enabled', true)) {
+            return null;
+        }
+
         return cache()->remember('api_response', now()->addMinutes(60 * 8), function () {
-            $response = Http::get($this->url);
+            try {
+                $response = Http::timeout(config('updater.timeout', 2))
+                    ->connectTimeout(config('updater.timeout', 2))
+                    ->get($this->url);
+            } catch (\Throwable) {
+                return null;
+            }
 
             if (! $response->ok()) {
                 return null;

@@ -2,6 +2,8 @@
 
 return [
     'url' => 'https://api.github.com/repos/lakasir/lakasir/releases/latest',
+    'enabled' => env('APP_OFFLINE', false) === false,
+    'timeout' => env('UPDATER_TIMEOUT', 2),
     'artisan_after_update' => [
         'migrate' => [
             '--force' => true,
